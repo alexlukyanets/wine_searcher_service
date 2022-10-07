@@ -8,7 +8,6 @@ from typing import Optional, List, Union
 from dotenv import load_dotenv
 from requests import session
 
-
 from selenium_driver import SeleniumChromeDriver
 from settings import WINE_SEARCHER_PRODUCT_URLS, WINE_SEARCHER_ITEMS_HEADERS, WINE_SEARCHER_TIPS_HEADERS
 from wine_searcher_service_parser import WineSearcherServiceParser
@@ -29,8 +28,12 @@ class WineSearcherService:
         self.cookies_str = None
         self.proxies = {'http': PROXY, 'https': PROXY}
         self.parser = WineSearcherServiceParser
-        self.request_session = session()
-        self.request_session.proxies.update(self.proxies)
+        self.request_session = self.update_request_session()
+
+    def update_request_session(self):
+        request_session = session()
+        request_session.proxies.update(self.proxies)
+        return request_session
 
     def change_proxy_ip(self):
         response = self.request_session.get(CHANGE_IP_URL)
@@ -39,6 +42,7 @@ class WineSearcherService:
         raise RuntimeError(f'Unable to change ip status code is {response.status_code}')
 
     def restart_search(self):
+        self.request_session = self.update_request_session()
         self.change_proxy_ip()
         self.write_cookies()
         self.print_items_and_tips()
