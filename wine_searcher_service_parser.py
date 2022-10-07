@@ -4,6 +4,8 @@ from json import JSONDecodeError
 from typing import Optional, List, Union
 from urllib.parse import unquote
 
+from scrapy.http import HtmlResponse
+
 
 @dataclass
 class WineItem:
@@ -25,6 +27,10 @@ class WineSearcherServiceParser:
     def build_items_url(cls, search_string: str) -> str:
         return f'{cls.domain_url()}find/{search_string}/europe?Xcurrencycode=EUR&Xsavecurrency=Y'
 
+    @staticmethod
+    def create_scrapy_response():
+        return
+
     @classmethod
     def build_tips_url(cls, search_string: str) -> str:
         return f'{cls.domain_url()}ajax/ng/csearch/search?q=1&p=1&c=wine&k={search_string}&v='
@@ -43,9 +49,10 @@ class WineSearcherServiceParser:
         return text.strip()
 
     @classmethod
-    def parse_items(cls, response) -> List:
+    def parse_items(cls, response, url) -> List:
+        response_items = HtmlResponse(url, body=response.content)
         pared_items = []
-        div_tags = response.xpath('//div[@class="js-offers-container"]/div')
+        div_tags = response_items.xpath('//div[@class="js-offers-container"]/div')
         for div_tag in div_tags:
             wine_item = WineItem()
             wine_item.shop_url = unquote(cls.extract_xpath(div_tag, 'div/a/@href'))

@@ -7,7 +7,7 @@ from typing import Optional, List, Union
 
 from dotenv import load_dotenv
 from requests import session
-from scrapy.http import HtmlResponse
+
 
 from selenium_driver import SeleniumChromeDriver
 from settings import WINE_SEARCHER_PRODUCT_URLS, WINE_SEARCHER_ITEMS_HEADERS, WINE_SEARCHER_TIPS_HEADERS
@@ -50,8 +50,7 @@ class WineSearcherService:
         if not self.parser.is_ok_status_code(response.status_code):
             self.restart_search()
             return
-        response_items = HtmlResponse(search_items_url, body=response.content)
-        return self.parser.parse_items(response_items)
+        return self.parser.parse_items(response, search_items_url)
 
     def search_tips(self) -> Optional[Union[List, str]]:
         WINE_SEARCHER_TIPS_HEADERS.update(cookie=self.cookies_str)
