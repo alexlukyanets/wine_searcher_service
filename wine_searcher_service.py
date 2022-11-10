@@ -28,9 +28,9 @@ class WineSearcherService:
         self.cookies_str = None
         self.proxies = {'http': PROXY, 'https': PROXY}
         self.parser = WineSearcherServiceParser
-        self.request_session = self.update_request_session()
+        self.request_session = self.create_request_session()
 
-    def update_request_session(self):
+    def create_request_session(self):
         request_session = session()
         request_session.proxies.update(self.proxies)
         return request_session
