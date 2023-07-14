@@ -25,12 +25,13 @@ class WineSearcherService:
     def __init__(self):
         self.cookies = {}
         self.cookies_str = None
+        self.search_string = None
         self.proxies = {'http': PROXY, 'https': PROXY}
         self.parser = WineSearcherServiceParser
         self.request_session = self.create_request_session()
         self.app = Flask(__name__)
         self.register_routes()
-        return
+
 
     def register_routes(self):
         self.app.add_url_rule('/<params>', 'get_items_and_tips', self.get_items_and_tips)
@@ -41,7 +42,6 @@ class WineSearcherService:
         return request_session
 
     def change_proxy_ip(self):
-        sleep(2)
         response = self.request_session.get(CHANGE_IP_URL)
         if self.parser.is_ok_status_code(response.status_code):
             return
@@ -106,10 +106,11 @@ class WineSearcherService:
         pickle.dump(driver.get_cookies(), open(COOKIES_FILE_NAME, "wb"))
         driver.close()
 
-    def get_items_and_tips(self, params):
+    def get_items_and_tips(self, params=None):
         if not params or not params.strip():
             return json.dumps({'error': 'Search string is empty'})
-        self.search_string = '+'.join(params.split()).replace(',', '').lower().strip()
+        if not self.search_string:
+            self.search_string = '+'.join(params.split()).replace(',', '').lower().strip()
         self.set_cookies_str()
         parsed_items = self.search_items()
         parsed_tips = self.search_tips()
