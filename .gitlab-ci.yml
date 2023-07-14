@@ -1,0 +1,4 @@
+include:
+  project: 'cf/cf-ci-template'
+  file: 'v2/helm-microservice.gitlab-ci.yml'
+  ref: master

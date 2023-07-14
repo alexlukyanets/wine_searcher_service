@@ -8,6 +8,7 @@ from typing import Optional, List, Union
 
 from dotenv import load_dotenv
 from requests import session
+from flask import Flask
 
 from selenium_driver import SeleniumChromeDriver
 from settings import WINE_SEARCHER_PRODUCT_URLS, WINE_SEARCHER_ITEMS_HEADERS, WINE_SEARCHER_TIPS_HEADERS
@@ -18,18 +19,22 @@ PROXY = os.getenv('PROXY')
 COOKIES_FILE_NAME = os.getenv('COOKIES_FILE_NAME')
 CHANGE_IP_URL = os.getenv('CHANGE_IP_URL')
 
+app = Flask(__name__)
+
 
 class WineSearcherService:
-    def __init__(self, driver):
-        try:
-            self.search_string = '+'.join(argv[1:]).replace(',', '').lower().strip()
-        except (IndexError, TypeError):
-            raise RuntimeError('Unable to parse search string')
+    def __init__(self):
         self.cookies = {}
         self.cookies_str = None
         self.proxies = {'http': PROXY, 'https': PROXY}
         self.parser = WineSearcherServiceParser
         self.request_session = self.create_request_session()
+        self.app = Flask(__name__)
+        self.register_routes()
+        return
+
+    def register_routes(self):
+        self.app.add_url_rule('/<params>', 'get_items_and_tips', self.get_items_and_tips)
 
     def create_request_session(self):
         request_session = session()
@@ -47,7 +52,7 @@ class WineSearcherService:
         self.request_session = self.create_request_session()
         self.change_proxy_ip()
         self.write_cookies()
-        self.print_items_and_tips()
+        self.get_items_and_tips()
 
     def search_items(self) -> Optional[List]:
         search_items_url = self.parser.build_items_url(self.search_string)
@@ -66,12 +71,6 @@ class WineSearcherService:
             self.restart_search()
             return
         return self.parser.parse_tips(response_tips)
-
-    def print_items_and_tips(self):
-        self.set_cookies_str()
-        parsed_items = self.search_items()
-        parsed_tips = self.search_tips()
-        print(json.dumps({'parsed_items': parsed_items, 'parsed_tips': parsed_tips}))
 
     def update_cookies(self):
         try:
@@ -100,6 +99,7 @@ class WineSearcherService:
         self.cookies_str = f"_pxhd={self.cookies.get('_pxhd')}; pxcts={self.cookies.get('pxcts')};  " \
                            f"_px3={self.cookies.get('_px3')}; _px2={self.cookies.get('_px2')}; " \
                            f"_pxde={self.cookies.get('_pxde')};"
+
     @staticmethod
     def write_cookies() -> None:
         driver = SeleniumChromeDriver().driver
@@ -107,7 +107,19 @@ class WineSearcherService:
         pickle.dump(driver.get_cookies(), open(COOKIES_FILE_NAME, "wb"))
         driver.close()
 
+    def get_items_and_tips(self, params):
+        if not params or not params.strip():
+            return json.dumps({'error': 'Search string is empty'})
+        self.search_string = '+'.join(params.split()).replace(',', '').lower().strip()
+        self.set_cookies_str()
+        parsed_items = self.search_items()
+        parsed_tips = self.search_tips()
+        return json.dumps({'parsed_items': parsed_items, 'parsed_tips': parsed_tips})
+
+    def run(self):
+        self.app.run()
+
 
 if __name__ == '__main__':
-    wine_service = WineSearcherService(SeleniumChromeDriver)
-    wine_service.print_items_and_tips()
+    wine_service = WineSearcherService()
+    wine_service.run()

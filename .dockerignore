@@ -1,0 +1,12 @@
+node_modules
+build
+.cache
+.tmp
+k8s/helm-configs
+.git
+.env-*
+.env.*
+.gitlab-ci.yml
+docker-compose-local.yaml
+.dockerignore
+Dockerfile
