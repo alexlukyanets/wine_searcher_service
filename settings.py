@@ -22,3 +22,12 @@ WINE_SEARCHER_TIPS_HEADERS = {
     'Connection': 'keep-alive',
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36',
     'x-requested-with': 'XMLHttpRequest'}
+
+WINE_SEARCHER_POSTMAN_HEADERS = {
+    'User-Agent': 'PostmanRuntime/7.32.3',
+    'Accept': '*/*',
+    'Postman-Token': '77bef8c5-345e-4062-8e24-f6aab7af3a23',
+    'Host': 'www.wine-searcher.com',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Connection': 'keep-alive',
+}

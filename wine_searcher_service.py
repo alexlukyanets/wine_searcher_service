@@ -1,6 +1,7 @@
 import json
 import os
 import pickle
+from time import sleep
 from random import choice
 from sys import argv
 from typing import Optional, List, Union
@@ -36,13 +37,14 @@ class WineSearcherService:
         return request_session
 
     def change_proxy_ip(self):
+        sleep(2)
         response = self.request_session.get(CHANGE_IP_URL)
         if self.parser.is_ok_status_code(response.status_code):
             return
         raise RuntimeError(f'Unable to change ip status code is {response.status_code}')
 
     def restart_search(self):
-        self.request_session = self.update_request_session()
+        self.request_session = self.create_request_session()
         self.change_proxy_ip()
         self.write_cookies()
         self.print_items_and_tips()
@@ -83,20 +85,23 @@ class WineSearcherService:
         if not self.cookies:
             self.write_cookies()
             self.update_cookies()
-        self.cookies_str = f"cookie_enabled=true; find_tab={self.cookies.get('find_tab')}; ID={self.cookies.get('ID')}; " \
-                           f"IDPWD={self.cookies.get('IDPWD')}; COOKIE_ID={self.cookies.get('COOKIE_ID')}; " \
-                           f"visit={self.cookies.get('visit')}; user_status={self.cookies.get('user_status')}; " \
-                           f"_csrf={self.cookies.get('_csrf')}; cookie_consent={self.cookies.get('cookie_consent')}; " \
-                           f"pxcts={self.cookies.get('pxcts')}; _hjSessionUser_453016={self.cookies.get('_hjSessionUser_453016')}; " \
-                           f"_hjFirstSeen={self.cookies.get('_hjFirstSeen')}; " \
-                           f"_hjSession_453016={self.cookies.get('_hjSession_453016')}; " \
-                           f"_hjAbsoluteSessionInProgress={self.cookies.get('_hjAbsoluteSessionInProgress')};  " \
-                           f"search={self.cookies.get('search')}; _ga_M0W3BEYMXL={self.cookies.get('_ga_M0W3BEYMXL')}; " \
-                           f"_ga={self.cookies.get('_ga')}; _pxde={self.cookies.get('_pxde')}; " \
-                           f"_pxhd={self.cookies.get('_pxhd')}; X-WS-Find-Mode=TW"
+        # self.cookies_str = f"cookie_enabled=true; find_tab={self.cookies.get('find_tab')}; ID={self.cookies.get('ID')}; " \
+        #                    f"IDPWD={self.cookies.get('IDPWD')}; COOKIE_ID={self.cookies.get('COOKIE_ID')}; " \
+        #                    f"visit={self.cookies.get('visit')}; user_status={self.cookies.get('user_status')}; " \
+        #                    f"_csrf={self.cookies.get('_csrf')}; cookie_consent={self.cookies.get('cookie_consent')}; " \
+        #                    f"pxcts={self.cookies.get('pxcts')}; _hjSessionUser_453016={self.cookies.get('_hjSessionUser_453016')}; " \
+        #                    f"_hjFirstSeen={self.cookies.get('_hjFirstSeen')}; " \
+        #                    f"_hjSession_453016={self.cookies.get('_hjSession_453016')}; " \
+        #                    f"_hjAbsoluteSessionInProgress={self.cookies.get('_hjAbsoluteSessionInProgress')};  " \
+        #                    f"search={self.cookies.get('search')}; _ga_M0W3BEYMXL={self.cookies.get('_ga_M0W3BEYMXL')}; " \
+        #                    f"_ga={self.cookies.get('_ga')}; _pxde={self.cookies.get('_pxde')}; " \
+        #                    f"_pxhd={self.cookies.get('_pxhd')}; X-WS-Find-Mode=TW"
 
+        self.cookies_str = f"_pxhd={self.cookies.get('_pxhd')}; pxcts={self.cookies.get('pxcts')};  " \
+                           f"_px3={self.cookies.get('_px3')}; _px2={self.cookies.get('_px2')}; " \
+                           f"_pxde={self.cookies.get('_pxde')};"
     @staticmethod
-    def write_cookies():
+    def write_cookies() -> None:
         driver = SeleniumChromeDriver().driver
         driver.get(choice(WINE_SEARCHER_PRODUCT_URLS))
         pickle.dump(driver.get_cookies(), open(COOKIES_FILE_NAME, "wb"))

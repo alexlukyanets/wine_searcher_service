@@ -1,3 +1,6 @@
+import os
+
+from dotenv import load_dotenv
 from seleniumwire import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -11,10 +14,14 @@ chrome_options.add_argument("--disable-popup-blocking")
 chrome_options.add_argument("--disable-notifications")
 chrome_options.add_argument("--lang=en-EU")
 
+load_dotenv()
+
+PROXY = os.getenv('PROXY')
+
 options = {
     'proxy': {
-        'http': 'http://oleksandrlukianets9815:e2252f@141.95.92.168:10657',
-        'https': 'http://oleksandrlukianets9815:e2252f@141.95.92.168:10657',
+        'http': PROXY,
+        'https': PROXY,
         'no_proxy': 'localhost,127.0.0.1'
     }
 }
