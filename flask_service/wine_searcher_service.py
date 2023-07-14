@@ -3,7 +3,6 @@ import os
 import pickle
 from time import sleep
 from random import choice
-from sys import argv
 from typing import Optional, List, Union
 
 from dotenv import load_dotenv
