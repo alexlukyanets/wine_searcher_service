@@ -11,13 +11,6 @@ containers:
   default:
     name: app
     enabled: true
-    command: "/bin/sh"
-    commandargs:
-      - "-c"
-      - "yarn build && node ./build/index.js"
-    volumeMounts:
-      - name: "data"
-        mountPath: /var/opt/report-db
 
 ## Services ##################################################
 
