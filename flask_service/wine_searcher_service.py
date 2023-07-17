@@ -1,7 +1,7 @@
 import json
 import os
 import pickle
-from time import sleep
+
 from random import choice
 from typing import Optional, List, Union
 
@@ -31,7 +31,6 @@ class WineSearcherService:
         self.request_session = self.create_request_session()
         self.app = Flask(__name__)
         self.register_routes()
-
 
     def register_routes(self):
         self.app.add_url_rule('/<params>', 'get_items_and_tips', self.get_items_and_tips)
