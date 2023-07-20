@@ -31,45 +31,20 @@ ingress:
 
 readinessProbe:
   failureThreshold: 3
+  httpGet:
+    path: /
+    port: 80
+    scheme: HTTP
   periodSeconds: 10
   successThreshold: 1
-  tcpSocket:
-    port: 80
-  timeoutSeconds: 1
+  timeoutSeconds: 3
 
 startupProbe:
   failureThreshold: 12
-  periodSeconds: 5
-  successThreshold: 1
-  tcpSocket:
+  httpGet:
+    path: /
     port: 80
+    scheme: HTTP
+  periodSeconds: 15
+  successThreshold: 1
   timeoutSeconds: 1
-
-## Persistent Volume Claims ########################################
-
-pvcs:
-  pvc1:
-    name: data
-    enabled: true
-    storageClass: longhorn
-    accessModes:
-      - ReadWriteOnce
-    size: 200Mi
-    annotations: {}
-    selector: {}
-    dataSource: {}
-    existingClaim: ""
-
-## Other ##########################################################
-
-affinity:
-  podAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchExpressions:
-            - key: app.kubernetes.io/name
-              operator: In
-              values:
-                - ${K_NAME}
-        topologyKey: kubernetes.io/hostname
-  podAntiAffinity: {}
