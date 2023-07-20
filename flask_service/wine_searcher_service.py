@@ -18,6 +18,7 @@ load_dotenv()
 PROXY = os.getenv('PROXY')
 COOKIES_FILE_NAME = os.getenv('COOKIES_FILE_NAME')
 CHANGE_IP_URL = os.getenv('CHANGE_IP_URL')
+SERVICE_PORT =os.getenv('SERVICE_PORT', '5000')
 
 app = Flask(__name__)
 
@@ -123,7 +124,7 @@ class WineSearcherService:
         return json.dumps({'parsed_items': parsed_items, 'parsed_tips': parsed_tips})
 
     def run(self):
-        self.app.run(host='0.0.0.0', debug=True)
+        self.app.run(host='0.0.0.0', port=SERVICE_PORT, debug=True)
 
 
 if __name__ == '__main__':
