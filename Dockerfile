@@ -20,7 +20,8 @@ RUN  python3 -m pip install --no-cache-dir -r requirements.txt
 #copy app files
 COPY . .
 
-EXPOSE 5000
+ENV SERVICE_PORT=80
+EXPOSE $SERVICE_PORT
 
 #environemnt variables
 ENV PYTHONDONTWRITEBYTECODE=1
