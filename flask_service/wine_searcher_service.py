@@ -33,7 +33,11 @@ class WineSearcherService:
         self.register_routes()
 
     def register_routes(self):
-        self.app.add_url_rule('/<params>', 'get_items_and_tips', self.get_items_and_tips)
+        self.app.add_url_rule('/get_items_and_tips/<params>', 'get_items_and_tips', self.get_items_and_tips)
+        self.app.add_url_rule('/', 'show_running', self.show_running)
+
+    def show_running(self):
+        return json.dumps({'response': 'Service is running'})
 
     def create_request_session(self):
         request_session = session()
@@ -56,6 +60,7 @@ class WineSearcherService:
         search_items_url = self.parser.build_items_url(self.search_string)
         WINE_SEARCHER_ITEMS_HEADERS.update(cookie=self.cookies_str)
         response = self.request_session.get(search_items_url, headers=WINE_SEARCHER_ITEMS_HEADERS)
+        self.app.logger.info(f'Request to {search_items_url}, response status code is {response.status_code}')
         if not self.parser.is_ok_status_code(response.status_code):
             self.restart_search()
             return
@@ -65,6 +70,7 @@ class WineSearcherService:
         WINE_SEARCHER_TIPS_HEADERS.update(cookie=self.cookies_str)
         tips_url = self.parser.build_tips_url(self.search_string)
         response_tips = self.request_session.get(tips_url, headers=WINE_SEARCHER_TIPS_HEADERS)
+        self.app.logger.info(f'Request to {tips_url}, response status code is {response_tips.status_code}')
         if not self.parser.is_ok_status_code(response_tips.status_code):
             self.restart_search()
             return
@@ -116,7 +122,7 @@ class WineSearcherService:
         return json.dumps({'parsed_items': parsed_items, 'parsed_tips': parsed_tips})
 
     def run(self):
-        self.app.run()
+        self.app.run(host='0.0.0.0', debug=True)
 
 
 if __name__ == '__main__':

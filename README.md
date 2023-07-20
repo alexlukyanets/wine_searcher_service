@@ -2,4 +2,4 @@
 ## For run service "python wine_searcher_service.py 2003 Toni Tomasi"
 ## proxy service https://astroproxy.com/
 
-## Python 3.11
+## Python 3.10
