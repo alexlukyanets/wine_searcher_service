@@ -2,3 +2,24 @@ include:
   project: 'cf/cf-ci-template'
   file: 'v2/helm-microservice.gitlab-ci.yml'
   ref: master
+
+variables:
+  DOCKER_BUILD_ARGS: |-
+    --build-arg PROXY
+    --build-arg CHANGE_IP_URL
+
+build:
+  variables:
+    DockerBuildArgs: $DOCKER_BUILD_ARGS
+
+publish:image:dev:
+  variables:
+    DockerBuildArgs: $DOCKER_BUILD_ARGS
+
+publish:image:staging:
+  variables:
+    DockerBuildArgs: $DOCKER_BUILD_ARGS
+
+publish:image:production:
+  variables:
+    DockerBuildArgs: $DOCKER_BUILD_ARGS
