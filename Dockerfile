@@ -30,4 +30,4 @@ ENV COOKIES_FILE_NAME=flask_service/cookies.pkl
 # set display port to avoid crash
 ENV DISPLAY=:99
 
-CMD ./flask_service/wine_searcher_service.py
+CMD /usr/bin/env python flask_service/wine_searcher_service.py

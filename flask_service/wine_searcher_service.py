@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import json
 import os
 import pickle
@@ -18,7 +17,7 @@ load_dotenv()
 PROXY = os.getenv('PROXY')
 COOKIES_FILE_NAME = os.getenv('COOKIES_FILE_NAME')
 CHANGE_IP_URL = os.getenv('CHANGE_IP_URL')
-SERVICE_PORT =os.getenv('SERVICE_PORT', '5000')
+SERVICE_PORT = os.getenv('SERVICE_PORT', 5000)
 
 app = Flask(__name__)
 
@@ -106,11 +105,11 @@ class WineSearcherService:
                            f"_px3={self.cookies.get('_px3')}; _px2={self.cookies.get('_px2')}; " \
                            f"_pxde={self.cookies.get('_pxde')};"
 
-    @staticmethod
-    def write_cookies() -> None:
+    def write_cookies(self) -> None:
         driver = SeleniumChromeDriver().driver
         driver.get(choice(WINE_SEARCHER_PRODUCT_URLS))
         pickle.dump(driver.get_cookies(), open(COOKIES_FILE_NAME, "wb"))
+        self.app.logger.info('Cookies was written')
         driver.close()
 
     def get_items_and_tips(self, params=None):
@@ -129,4 +128,5 @@ class WineSearcherService:
 
 if __name__ == '__main__':
     wine_service = WineSearcherService()
+    wine_service.write_cookies()
     wine_service.run()

@@ -31,7 +31,7 @@ options = {
         'no_proxy': 'localhost,127.0.0.1'}
 }
 
-service = Service("chromedriver")
+service = Service("chromedriver_docker")
 
 
 class SeleniumChromeDriver:
