@@ -1,15 +1,19 @@
 FROM python:3.10
 
 # install google chrome and other dependencies
-RUN (wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -) \
-    && echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' >> /etc/apt/sources.list.d/google-chrome.list \
-    && apt-get -y update \
-    && apt-get install -y --no-install-recommends \
-        google-chrome-stable \
-        unzip \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip install --upgrade pip
+# Install necessary dependencies
+# Install necessary tools
+RUN apt-get update && apt-get install -y wget gnupg2
+
+# Download Google Chrome .deb package from the provided link
+RUN wget "https://www.slimjet.com/chrome/download-chrome.php?file=files%2F104.0.5112.102%2Fgoogle-chrome-stable_current_amd64.deb" -O /tmp/google-chrome-stable_current_amd64.deb
+
+# Install the .deb package
+RUN apt-get install -y /tmp/google-chrome-stable_current_amd64.deb
+
+# Clean up the downloaded package
+RUN rm /tmp/google-chrome-stable_current_amd64.deb
+
 
 WORKDIR /usr/src/app
 

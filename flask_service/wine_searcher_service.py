@@ -14,6 +14,7 @@ from settings import WINE_SEARCHER_PRODUCT_URLS, WINE_SEARCHER_ITEMS_HEADERS, WI
 from wine_searcher_service_parser import WineSearcherServiceParser
 
 load_dotenv()
+
 PROXY = os.getenv('PROXY')
 COOKIES_FILE_NAME = os.getenv('COOKIES_FILE_NAME')
 CHANGE_IP_URL = os.getenv('CHANGE_IP_URL')
@@ -38,6 +39,7 @@ class WineSearcherService:
         self.app.add_url_rule('/', 'show_running', self.show_running)
 
     def show_running(self):
+        self.write_cookies()
         return json.dumps({'response': 'Service is running'})
 
     def create_request_session(self):
@@ -109,7 +111,6 @@ class WineSearcherService:
         driver = SeleniumChromeDriver().driver
         driver.get(choice(WINE_SEARCHER_PRODUCT_URLS))
         pickle.dump(driver.get_cookies(), open(COOKIES_FILE_NAME, "wb"))
-        self.app.logger.info('Cookies was written')
         driver.close()
 
     def get_items_and_tips(self, params=None):
@@ -128,5 +129,5 @@ class WineSearcherService:
 
 if __name__ == '__main__':
     wine_service = WineSearcherService()
-    wine_service.write_cookies()
     wine_service.run()
+

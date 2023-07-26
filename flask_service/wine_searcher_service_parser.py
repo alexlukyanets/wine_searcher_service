@@ -61,7 +61,8 @@ class WineSearcherServiceParser:
             wine_item.location = cls.extract_xpath(div_tag, 'div/div[@class="col3"]/div[2]/text()')
             wine_item.bottle_size = cls.extract_xpath(div_tag, 'div/div[@class="col3"]/div[2]/text()')
             wine_item.price = div_tag.xpath('div/a/div/div/div[contains(@class, "detail price")]/span/text()').getall()
-            wine_item.price = ' '.join(wine_item.price)
+            if wine_item.price:
+                wine_item.price = ' '.join(wine_item.price)
             wine_item.tax_inf = cls.extract_xpath(div_tag, 'div/a/div/div/div[contains(@class, "price__tax")]/text()')
             pared_items.append(wine_item.__dict__)
         return pared_items
