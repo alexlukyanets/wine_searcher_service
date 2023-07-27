@@ -1,7 +1,5 @@
 FROM python:3.10
 
-# install google chrome and other dependencies
-# Install necessary dependencies
 # Install necessary tools
 RUN apt-get update && apt-get install -y wget gnupg2
 
