@@ -108,7 +108,9 @@ class WineSearcherService:
                            f"_pxde={self.cookies.get('_pxde')};"
 
     def write_cookies(self) -> None:
+        self.app.logger.info('Start driver')
         driver = SeleniumChromeDriver().driver
+        self.app.logger.info('Create')
         driver.get(choice(WINE_SEARCHER_PRODUCT_URLS))
         pickle.dump(driver.get_cookies(), open(COOKIES_FILE_NAME, "wb"))
         driver.close()
